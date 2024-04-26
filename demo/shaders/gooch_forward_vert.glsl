@@ -9,7 +9,7 @@ out vec3 position;
 out vec3 normal;
 out vec3 light_dir;
 out vec3 view_dir;
-out uvec4 entity;
+flat out uvec4 entity;
 
 uniform vec3 light_position;
 uniform vec3 view_position;
