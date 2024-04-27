@@ -1,6 +1,7 @@
 #include "demo_session.hpp"
 
 #include "components/viewer.hpp"
+#include "session_config_rules.hpp"
 
 #include "pancake/components/3d.hpp"
 #include "pancake/core/renderer.hpp"
@@ -66,17 +67,6 @@ void DemoSession::configure() {
     gooch_forward_select_mat_res.setViewInputName("view");
   }
 
-  GUID cube_mesh_guid;
-  if (const auto& res = resources().getOrCreate<ObjMeshResource>("models/cube.mesh", false);
-      res.has_value()) {
-    ObjMeshResource& obj_mesh_res = res.value();
-
-    obj_mesh_res.setObj(resources().getOrCreate<ObjResource>("models/cube.obj").guid());
-    obj_mesh_res.setName("Cube");
-
-    cube_mesh_guid = obj_mesh_res.guid();
-  }
-
   renderer().matchRenderSizeToScreenSize(true);
 
   Ptr<World> world{new World()};
@@ -96,10 +86,11 @@ void DemoSession::configure() {
   fb_info.num_targets = 2;
   cam_ent.addComponent<Viewer>();
 
-  EntityWrapper mesh_ent = world->createEntity();
-  mesh_ent.addComponent<Transform3D>();
-  mesh_ent.addComponent<MeshInstance>().mesh = cube_mesh_guid;
-  mesh_ent.addComponent<MaterialInstance>().material = gooch_forwad_mat_guid;
+  if (const auto* rule = config().getRule<GltfScenePathRule>(); nullptr != rule) {
+    if (const auto res = resources().getOrCreate<GltfResource>(rule->path()); res.has_value()) {
+      GltfImporter(gooch_forwad_mat_guid).import(*world, resources(), res.value());
+    }
+  }
 
   EntityWrapper light_ent = world->createEntity();
   light_ent.addComponent<Transform3D>().modify().translation() = Vec3f(0.f, 20.f, 0.f);

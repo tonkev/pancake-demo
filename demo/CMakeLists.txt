@@ -11,6 +11,7 @@ add_executable(demo
     src/systems/pick_mouse_entity.cpp
     src/demo_session.cpp
     src/demo.cpp
+    src/session_config_rules.cpp
 )
 
 target_include_directories(demo PUBLIC
