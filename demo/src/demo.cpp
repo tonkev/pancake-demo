@@ -5,6 +5,6 @@
 using namespace pancake;
 using namespace demo;
 
-Session* Session::create(const SessionConfig& config) {
-  return new DemoSession(config);
+Session* Session::create(SessionConfig&& config) {
+  return new DemoSession(std::move(config));
 }
