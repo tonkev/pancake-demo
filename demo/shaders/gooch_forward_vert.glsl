@@ -1,9 +1,9 @@
 #version 330 core
 layout(location = 0) in vec4 v_position;
 layout(location = 1) in vec4 v_normal;
-layout(location = 4) in mat4 i_mvp_transform;
-layout(location = 8) in mat4 i_model_transform;
-layout(location = 12) in uvec4 i_entity;
+layout(location = 6) in mat4 i_mvp_transform;
+layout(location = 10) in mat4 i_model_transform;
+layout(location = 14) in uvec4 i_entity;
 
 out vec3 position;
 out vec3 normal;
