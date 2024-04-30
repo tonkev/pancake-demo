@@ -12,6 +12,7 @@ in vec3 view_dir;
 flat in uvec4 entity;
 
 uniform sampler2D base_color_texture;
+uniform vec4 base_color_texture_transform;
 
 uniform float select_period;
 uniform vec4 select_color;
@@ -20,7 +21,9 @@ uniform float time;
 
 void main()
 {
-    vec4 surface_color = texture2D(base_color_texture, tex_coords);
+    vec2 f_tex_coords = vec2(mod(tex_coords.x, 1), mod(tex_coords.y, 1));
+    f_tex_coords = (f_tex_coords * base_color_texture_transform.zw) + base_color_texture_transform.xy;
+    vec4 surface_color = texture2D(base_color_texture, f_tex_coords);
 
     vec4 cool_color = vec4(vec3(0, 0, 0.55) + (0.25 * surface_color.xyz), surface_color.w);
     vec4 warm_color = vec4(vec3(0.3, 0.3, 0) + (0.25 * surface_color.xyz), surface_color.w);

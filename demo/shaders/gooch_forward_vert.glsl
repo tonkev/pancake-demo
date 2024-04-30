@@ -15,8 +15,6 @@ out vec3 view_dir;
 
 flat out uvec4 entity;
 
-uniform vec4 base_color_texture_transform;
-
 uniform vec3 light_position;
 uniform vec3 view_position;
 
@@ -26,7 +24,7 @@ void main()
     
     position = (i_model_transform * vec4(v_position.xyz, 1.0)).xyz;
     normal = (i_model_transform * vec4(v_normal.xyz, 0.0)).xyz;
-    tex_coords = (v_tex_coords * base_color_texture_transform.zw) + base_color_texture_transform.xy;
+    tex_coords = v_tex_coords;
 
     light_dir = normalize(light_position - position.xyz);
     view_dir = normalize(view_position - position.xyz);
