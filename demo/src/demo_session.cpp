@@ -44,7 +44,6 @@ void DemoSession::configure() {
     MaterialResource& gooch_forward_mat_res = res.value();
 
     gooch_forward_mat_res.setShader(gooch_forwad_shader_guid);
-    gooch_forward_mat_res.addInput(ShaderInput("surface_color", Vec4f(0.5f, 0.5f, 0.5f, 1.f)));
     gooch_forward_mat_res.addInput(ShaderInput("select_period", 0.f));
     gooch_forward_mat_res.setLightPassInputName("light");
     gooch_forward_mat_res.setViewInputName("view");
@@ -58,8 +57,6 @@ void DemoSession::configure() {
     MaterialResource& gooch_forward_select_mat_res = res.value();
 
     gooch_forward_select_mat_res.setShader(gooch_forwad_shader_guid);
-    gooch_forward_select_mat_res.addInput(
-        ShaderInput("surface_color", Vec4f(0.5f, 0.5f, 0.5f, 1.f)));
     gooch_forward_select_mat_res.addInput(ShaderInput("select_period", 2.f));
     gooch_forward_select_mat_res.addInput(
         ShaderInput("select_color", Vec4f(1.0f, 0.5f, 0.0f, 1.f)));
