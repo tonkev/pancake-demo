@@ -33,9 +33,5 @@ void main()
 
     frag_color = mix(mix(cool_color, warm_color, t), highlight_color, s);
 
-    if (0 < select_period) {
-      frag_color = mix(frag_color, select_color, select_blend);
-    }
-    
     pick = entity;
 }
