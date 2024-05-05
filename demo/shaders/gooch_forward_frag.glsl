@@ -14,9 +14,6 @@ flat in uvec4 entity;
 uniform sampler2D base_color_texture;
 uniform vec4 base_color_texture_transform;
 
-uniform float select_period;
-uniform vec4 select_color;
-
 uniform float time;
 
 void main()
@@ -33,11 +30,6 @@ void main()
     float t = (normalDotLightDir + 1) * 0.5;
     vec3 r = (2 * normalDotLightDir * normal) - light_dir;
     float s = clamp((100 * dot(r, view_dir)) - 97, 0, 1);
-    
-    float select_blend = mod(time, select_period * 0.5);
-    if ((select_period * 0.5) < mod(time, select_period)) {
-      select_blend = 1 - select_blend;
-    }
 
     frag_color = mix(mix(cool_color, warm_color, t), highlight_color, s);
 

@@ -12,14 +12,13 @@ class Mover : public pancake::LogicSystem {
   virtual std::string_view name() const override;
   virtual pancake::SystemId id() const override;
 
+  virtual const pancake::SessionAccess& getSessionAccess() const override;
   virtual const pancake::ComponentAccess& getComponentAccess() const override;
 
  protected:
   virtual void _configure(pancake::Session& session) override;
   virtual void _run(const pancake::SessionWrapper& session,
                     const pancake::WorldWrapper& world) const override;
-
-  pancake::GUID _regular_material = pancake::GUID::null;
   pancake::GUID _select_material = pancake::GUID::null;
 };
 }  // namespace demo

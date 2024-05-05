@@ -4,6 +4,7 @@
 
 #include "pancake/components/3d.hpp"
 #include "pancake/core/input.hpp"
+#include "pancake/core/session_access.hpp"
 #include "pancake/core/session_wrapper.hpp"
 #include "pancake/ecs/components.hpp"
 #include "pancake/ecs/world_wrapper.hpp"
@@ -16,14 +17,9 @@ using namespace demo;
 LogicSystem::StaticAdder<Mover> mover_adder{};
 
 void Mover::_configure(pancake::Session& session) {
-  _regular_material = session.resources()
-                          .getOrCreate<MaterialResource>("materials/gooch_forward.material", false)
-                          .guid();
-
-  _select_material =
-      session.resources()
-          .getOrCreate<MaterialResource>("materials/gooch_forward_select.material", false)
-          .guid();
+  _select_material = session.resources()
+                         .getOrCreate<MaterialResource>("materials/select_deferred.material", false)
+                         .guid();
 }
 
 void Mover::_run(const SessionWrapper& session, const WorldWrapper& world) const {
@@ -48,7 +44,8 @@ void Mover::_run(const SessionWrapper& session, const WorldWrapper& world) const
     rotate = true;
   }
 
-  for (const auto& [transform, viewer] : world.getComponents<Transform3D, Viewer>()) {
+  for (const auto& [base, transform, viewer] :
+       world.getComponents<const Base, Transform3D, Viewer>()) {
     Transform3D* target_transform = nullptr;
 
     if (viewer->mode == ViewerMode::Camera) {
@@ -60,25 +57,17 @@ void Mover::_run(const SessionWrapper& session, const WorldWrapper& world) const
     } else {
       flip = -1.f;
 
-      if (viewer->target == Entity::null) {
+      if ((viewer->target == Entity::null) && (viewer->under_mouse != base->self)) {
         viewer->target = viewer->under_mouse;
       }
 
-      MaterialInstance* target_material_instance = nullptr;
       if (viewer->target != Entity::null) {
         EntityWrapper target = world.getEntityWrapper(viewer->target);
-        if (target.isValid() && target.hasComponents<Transform3D, MaterialInstance>()) {
-          target_material_instance = &target.getComponent<MaterialInstance>();
-
-          target_material_instance->material = _select_material;
-
+        if (target.isValid() && target.hasComponents<Transform3D>()) {
           if (viewer->mode == ViewerMode::Selecting) {
             if (move || rotate) {
               viewer->mode = ViewerMode::Moving;
             } else if (viewer->target != viewer->under_mouse) {
-              target_material_instance->material = _regular_material;
-              target_material_instance = nullptr;
-
               viewer->target = Entity::null;
             }
           } else if (viewer->mode == ViewerMode::Moving) {
@@ -95,10 +84,6 @@ void Mover::_run(const SessionWrapper& session, const WorldWrapper& world) const
 
       if (input.isKeyJustPressed(KBCode::Space)) {
         viewer->mode = ViewerMode::Camera;
-
-        if (nullptr != target_material_instance) {
-          target_material_instance->material = _regular_material;
-        }
       }
     }
 
@@ -124,6 +109,17 @@ void Mover::_run(const SessionWrapper& session, const WorldWrapper& world) const
         }
       }
     }
+
+    if (const auto material_opt =
+            session.resources().getOrCreate<MaterialResource>(_select_material);
+        material_opt.has_value()) {
+      MaterialResource& material = material_opt.value();
+      material.addInput(
+          ShaderInput("select_entity", reinterpret_cast<const Vec4u&>(viewer->target)));
+      material.addInput(ShaderInput("select_period", (viewer->target == Entity::null) ? 0.f : 2.f));
+    }
+
+    break;
   }
 }
 
@@ -135,8 +131,13 @@ SystemId Mover::id() const {
   return System::id<Mover>();
 }
 
+const SessionAccess& Mover::getSessionAccess() const {
+  static const SessionAccess session_access = SessionAccess().addResources();
+  return session_access;
+}
+
 const ComponentAccess& Mover::getComponentAccess() const {
   static const ComponentAccess component_access =
-      Components::getAccess<Transform3D, MaterialInstance, Viewer>();
+      Components::getAccess<const Base, Transform3D, Viewer>();
   return component_access;
 }
