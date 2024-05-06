@@ -50,6 +50,7 @@ void Mover::_run(const SessionWrapper& session, const WorldWrapper& world) const
 
     if (viewer->mode == ViewerMode::Camera) {
       target_transform = transform;
+      viewer->target = Entity::null;
 
       if (input.isKeyJustPressed(KBCode::Space)) {
         viewer->mode = ViewerMode::Selecting;
