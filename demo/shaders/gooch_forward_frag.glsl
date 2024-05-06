@@ -22,8 +22,8 @@ void main()
     f_tex_coords = (f_tex_coords * base_color_texture_transform.zw) + base_color_texture_transform.xy;
     vec4 surface_color = texture2D(base_color_texture, f_tex_coords);
 
-    vec4 cool_color = vec4(vec3(0, 0, 0.55) + (0.25 * surface_color.xyz), surface_color.w);
-    vec4 warm_color = vec4(vec3(0.3, 0.3, 0) + (0.25 * surface_color.xyz), surface_color.w);
+    vec4 cool_color = vec4(vec3(0, 0, 0.55) + (surface_color.xyz), surface_color.w);
+    vec4 warm_color = vec4(vec3(0.1, 0.1, 0) + (surface_color.xyz), surface_color.w);
     vec4 highlight_color = vec4(1, 1, 1, 1);
 
     float normalDotLightDir = dot(normal, light_dir);
