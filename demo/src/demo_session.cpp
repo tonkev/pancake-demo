@@ -105,12 +105,15 @@ void DemoSession::configure() {
   }
 
   EntityWrapper select_ent = world->createEntity();
-  select_ent.addComponent<Transform3D>();
+  select_ent.addComponent<Transform3D>().modify().scale().y() = -1.f;
   MeshInstance& mesh_inst = select_ent.addComponent<MeshInstance>();
   mesh_inst.mesh = renderer().getUnitSquare()->guid();
   mesh_inst.camera_mask = CameraMask().with(1);
   select_ent.addComponent<MaterialInstance>().material = select_mat_guid;
-  Camera3D& select_cam = select_ent.addComponent<Camera3D>();
+
+  EntityWrapper select_cam_ent = world->createEntity();
+  select_cam_ent.addComponent<Transform3D>();
+  Camera3D& select_cam = select_cam_ent.addComponent<Camera3D>();
   select_cam.framebuffer = GUID::null;  // screen framebuffer
   select_cam.mask = CameraMask().with(1);
   select_cam.perspective = false;
